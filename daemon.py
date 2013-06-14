@@ -79,7 +79,7 @@ class Daemon(ControlServer):
 
             sorted_scores = list(sorted(scores.items(), key=lambda x: x[1]))
             best_vpn, best_score = (sorted_scores[0] if sorted_scores
-                                    else None, DEAD)
+                                    else (None, DEAD))
             active_score = scores[self.active_vpn] if self.active_vpn else DEAD
             logging.debug("active_score: %s, best_score: %s",
                           active_score, best_score,)
