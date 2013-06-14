@@ -20,11 +20,14 @@ DEAD = 0x7fffffff
 
 def ping(ip):
     # Packet size must be 0, otherwise timeout rate may rise significantly
-    result = pyping.ping(
-        ip, count=1, timeout=config.PING_TIMEOUT * 1000,
-        packet_size=0, own_id=random.randrange(0xffff),
-    )
-    rtt = float(result.avg_rtt) / 1000 if result.avg_rtt else None
+    try:
+        result = pyping.ping(
+            ip, count=1, timeout=config.PING_TIMEOUT * 1000,
+            packet_size=0, own_id=random.randrange(0xffff),
+        )
+        rtt = float(result.avg_rtt) / 1000 if result.avg_rtt else None
+    except ZeroDivisionError:
+        rtt = None
 
     logging.debug("Ping: %s, %s", ip, rtt if rtt else "timeout")
     return rtt
