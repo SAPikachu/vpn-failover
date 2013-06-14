@@ -1,0 +1,10 @@
+PING_TIMEOUT = 2
+CONTROL_ENDPOINT = "ipc:///run/vpn-failover.sock"
+PING_INTERVAL = 1 # s
+MAX_PING_SAMPLES = 60
+DEAD_SAMPLES = 10
+DEAD_THRESHOLD = 7
+SCORE_SCALE = 10000
+TIMEOUT_SCORE = 15 * SCORE_SCALE
+SWITCH_THRESHOLD = 3
+SWITCH_CMD = "initctl --no-wait emit vpn-event EVENT=vpn_switch IP={ip} REASON={reason}"
