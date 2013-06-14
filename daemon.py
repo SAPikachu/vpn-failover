@@ -7,26 +7,23 @@ from collections import deque
 from itertools import islice
 import logging
 import subprocess
+import random
 
-from scapy.all import IP, ICMP, sr1
-import scapy
+import pyping
 
 import config
 from controlserver import ControlServer
 
 DEAD = 0x7fffffff
 
-scapy.all.conf.verb = False
-
 
 def ping(ip):
-    packet = IP(dst=ip) / ICMP()
-    start = time()
-    result = sr1(packet, timeout=config.PING_TIMEOUT)
-    if not result:
-        rtt = None
-    else:
-        rtt = time() - start
+    # Packet size must be 0, otherwise timeout rate may rise significantly
+    result = pyping.ping(
+        ip, count=1, timeout=config.PING_TIMEOUT * 1000,
+        packet_size=0, own_id=random.randrange(0xffff),
+    )
+    rtt = float(result.avg_rtt) / 1000 if result.avg_rtt else None
 
     logging.debug("Ping: {}, {}".format(
         ip, rtt if rtt else "timeout",
