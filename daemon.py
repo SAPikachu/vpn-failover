@@ -90,7 +90,7 @@ class Daemon(ControlServer):
                 subprocess.Popen(config.SWITCH_CMD.format(
                     ip=best_vpn,
                     reason=reason,
-                ))
+                ).split(" "))
 
             while True:
                 remaining_time = config.PING_INTERVAL - (time() - start)
