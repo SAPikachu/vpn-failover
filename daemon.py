@@ -122,5 +122,7 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args()
     log_level = logging.DEBUG if args.verbose else logging.INFO
-    logging.basicConfig(level=log_level)
+    logging.basicConfig(
+        level=log_level, format="%(asctime)s " + logging.BASIC_FORMAT,
+    )
     Daemon()._main()
