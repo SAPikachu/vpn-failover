@@ -7,4 +7,4 @@ DEAD_THRESHOLD = 7
 SCORE_SCALE = 10000
 TIMEOUT_SCORE = 15 * SCORE_SCALE
 SWITCH_THRESHOLD = 3
-SWITCH_CMD = "initctl --no-wait emit vpn-event EVENT=vpn_switch IP={ip} REASON={reason}"
+SWITCH_CMD = "initctl emit --no-wait vpn-event EVENT=vpn_switch IP={ip} REASON={reason}"
