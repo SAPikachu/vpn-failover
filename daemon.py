@@ -34,6 +34,9 @@ def ping(ip):
 
 
 def calc_score(samples):
+    if len(samples) < 10:
+        return DEAD
+
     if len([x for x in islice(samples, config.DEAD_SAMPLES) if x is None]) > \
             config.DEAD_THRESHOLD:
         return DEAD
