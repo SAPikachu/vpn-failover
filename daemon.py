@@ -25,9 +25,7 @@ def ping(ip):
     )
     rtt = float(result.avg_rtt) / 1000 if result.avg_rtt else None
 
-    logging.debug("Ping: {}, {}".format(
-        ip, rtt if rtt else "timeout",
-    ))
+    logging.debug("Ping: %s, %s", ip, rtt if rtt else "timeout")
     return rtt
 
 
@@ -83,16 +81,12 @@ class Daemon(ControlServer):
             best_vpn, best_score = (sorted_scores[0] if sorted_scores
                                     else None, DEAD)
             active_score = scores[self.active_vpn] if self.active_vpn else DEAD
+            logging.debug("active_score: %s, best_score: %s",
+                          active_score, best_score,)
             if active_score > best_score * config.SWITCH_THRESHOLD:
                 self.active_vpn = best_vpn
                 reason = "dead" if active_score == DEAD else "slow"
-                logging.info(
-                    ("VPN switch: {}, reason: {},"
-                     "active_score: {}, best_score: {}")
-                    .format(
-                        best_vpn, reason, active_score, best_score,
-                    )
-                )
+                logging.info("VPN switch: %s, reason: %s", best_vpn, reason)
                 subprocess.Popen(config.SWITCH_CMD.format(
                     ip=best_vpn,
                     reason=reason,
