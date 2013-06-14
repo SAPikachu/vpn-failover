@@ -8,6 +8,7 @@ from itertools import islice
 import logging
 import subprocess
 import random
+import argparse
 
 import pyping
 
@@ -111,5 +112,9 @@ class Daemon(ControlServer):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-v", "--verbose", action="store_true")
+    args = parser.parse_args()
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+    logging.basicConfig(level=log_level)
     Daemon()._main()
