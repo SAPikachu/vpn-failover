@@ -11,9 +11,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("event")
     parser.add_argument("ip")
+    parser.add_argument("--timeout", type=int, default=500)
     args = parser.parse_args()
 
-    client = ControlClient(config.CONTROL_ENDPOINT)
+    client = ControlClient(config.CONTROL_ENDPOINT, resp_timeout=args.timeout)
     getattr(client, args.event)(args.ip)
 
 
