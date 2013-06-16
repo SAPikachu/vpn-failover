@@ -65,7 +65,10 @@ class Daemon(ControlServer):
         self.changed = True
 
     def vpn_switch(self, ip):
-        logging.info("Got message: VPN switch: " + ip)
+        pass
+
+    def vpn_switch_complete(self, ip):
+        logging.info("Got message: VPN switch complete: " + ip)
         if ip not in self.vpns:
             logging.warning(
                 "Invalid VPN switch message: IP {} is not in VPN list".
