@@ -50,18 +50,23 @@ class Daemon(ControlServer):
     def __init__(self):
         os.umask(0o177)
         super(Daemon, self).__init__(config.CONTROL_ENDPOINT)
-        self.vpns = set()
+        self.vpns = {}
         self.changed = False
         self.active_vpn = None
 
-    def vpn_up(self, ip):
-        logging.info("Got message: VPN up: " + ip)
-        self.vpns.add(ip)
+    def vpn_up(self, ip, label=None):
+        label = label or ip
+        logging.info("Got message: VPN up: (%s) %s", label, ip)
+        if ip in self.vpns.values():
+            logging.info("IP %s is already in the list", ip)
+            return
+
+        self.vpns[label] = ip
         self.changed = True
 
-    def vpn_down(self, ip):
-        logging.info("Got message: VPN down: " + ip)
-        self.vpns.discard(ip)
+    def vpn_down(self, label):
+        logging.info("Got message: VPN down: %s", label)
+        self.vpns.pop(label, None)
         self.changed = True
 
     def vpn_switch(self, ip):
@@ -69,7 +74,7 @@ class Daemon(ControlServer):
 
     def vpn_switch_complete(self, ip):
         logging.info("Got message: VPN switch complete: " + ip)
-        if ip not in self.vpns:
+        if ip not in self.vpns.values():
             logging.warning(
                 "Invalid VPN switch message: IP {} is not in VPN list".
                 format(ip)
@@ -83,7 +88,7 @@ class Daemon(ControlServer):
         while True:
             start = time()
             scores = {}
-            for ip in self.vpns:
+            for ip in ping_samples:
                 ping_samples[ip].appendleft(ping(ip))
                 scores[ip] = calc_score(ping_samples[ip])
 
@@ -110,10 +115,10 @@ class Daemon(ControlServer):
 
             if self.changed:
                 [ping_samples.pop(x) for x in list(ping_samples.keys())
-                    if x not in self.vpns]
+                    if x not in self.vpns.values()]
                 [ping_samples.setdefault(
                     x, deque(maxlen=config.MAX_PING_SAMPLES),
-                ) for x in self.vpns if x not in ping_samples]
+                ) for x in self.vpns.values() if x not in ping_samples]
                 if self.active_vpn not in ping_samples:
                     self.active_vpn = None
 
